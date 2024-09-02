@@ -28,8 +28,18 @@ class GenAgg(Aggregation):
 		if b is None:
 			self.b = nn.Parameter(torch.tensor(0.0))
 		else:
-			self.b = b
+			self.b = b	
+	
 
+	def reset_parameters(self):
+		# Reinitialize a and b
+		nn.init.zeros_(self.a)
+		nn.init.zeros_(self.b)
+		
+		# Reinitialize the parameters of self.f if it has reset_parameters method
+		if hasattr(self.f, 'reset_parameters'):
+			self.f.reset_parameters()
+			
 
 	def get_n(
 		self,

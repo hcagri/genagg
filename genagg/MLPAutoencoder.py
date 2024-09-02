@@ -79,6 +79,25 @@ class MLPAutoencoder(nn.Module):
 			if hasattr(module, 'weight') and isinstance(module, torch.nn.Linear):
 				# torch.nn.init.normal_(module.weight, mean=0.02, std=0.1)
 				torch.nn.init.kaiming_normal_(module.weight)
+	
+	def init_weights_modified(self, forward=True):
+		if forward:
+			net = self.net_for
+		else:
+			net = self.net_rev
+		if not self.init:
+			return
+		for module in net.children():
+			if hasattr(module, 'weight'):
+				# torch.nn.init.normal_(module.weight, mean=0.02, std=0.1)
+				torch.nn.init.kaiming_normal_(module.weight)
+	
+	def reset_parameters(self):
+		for name, param in self.named_parameters():
+			if 'weight' in name:
+				param = nn.init.kaiming_normal_(param.detach())
+			elif 'bias' in name:
+				param = nn.init.constant_(param.detach(), 0)
 
 
 class BatchNorm(nn.Module):
